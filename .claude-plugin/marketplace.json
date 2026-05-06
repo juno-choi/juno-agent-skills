@@ -17,6 +17,17 @@
         "email": "junho.choi@bdacs.co.kr"
       },
       "keywords": ["git", "hook", "safety", "commit"]
+    },
+    {
+      "name": "git-push-blocker",
+      "source": "./plugins/git-push-blocker",
+      "description": "git push 실행을 항상 차단하는 PreToolUse hook. 원격에 영향을 주는 작업은 사용자가 직접 터미널에서 수행하도록 강제한다.",
+      "version": "0.1.0",
+      "author": {
+        "name": "junho.choi",
+        "email": "junho.choi@bdacs.co.kr"
+      },
+      "keywords": ["git", "hook", "safety", "push", "block"]
     }
   ]
 }
