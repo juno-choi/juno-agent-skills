@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git commit:*)",
+            "command": "echo '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"permissionDecision\":\"ask\",\"permissionDecisionReason\":\"커밋 내용을 확인해주세요. 커밋 메시지와 변경 사항이 의도한 대로 작성되었는지 검토해주세요.\"}}'"
+          }
+        ]
+      }
+    ]
+  }
+}

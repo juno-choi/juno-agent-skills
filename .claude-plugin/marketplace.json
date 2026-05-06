@@ -1,0 +1,22 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "juno-agent-skills",
+  "description": "junho.choi 개인 Claude Code 도구 모음 — hook, skill, agent 정리",
+  "owner": {
+    "name": "junho.choi",
+    "email": "junho.choi@bdacs.co.kr"
+  },
+  "plugins": [
+    {
+      "name": "git-commit-guard",
+      "source": "./plugins/git-commit-guard",
+      "description": "git commit 실행 전 항상 권한 프롬프트를 띄워 커밋 메시지를 검토하게 하는 PreToolUse hook",
+      "version": "0.1.0",
+      "author": {
+        "name": "junho.choi",
+        "email": "junho.choi@bdacs.co.kr"
+      },
+      "keywords": ["git", "hook", "safety", "commit"]
+    }
+  ]
+}
