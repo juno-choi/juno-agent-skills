@@ -28,6 +28,17 @@
         "email": "junho.choi@bdacs.co.kr"
       },
       "keywords": ["git", "hook", "safety", "push", "block"]
+    },
+    {
+      "name": "harness-workflow",
+      "source": "./plugins/harness-workflow",
+      "description": "프로젝트 로컬 workspace/ 기반 AI 개발 하네스. plan → TDD(test-coder/coder/verifier) → close 워크플로우 제공",
+      "version": "0.1.0",
+      "author": {
+        "name": "junho.choi",
+        "email": "junho.choi@bdacs.co.kr"
+      },
+      "keywords": ["harness", "tdd", "workflow", "plan", "workspace"]
     }
   ]
 }
