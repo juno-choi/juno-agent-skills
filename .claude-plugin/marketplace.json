@@ -8,37 +8,15 @@
   },
   "plugins": [
     {
-      "name": "git-commit-guard",
-      "source": "./plugins/git-commit-guard",
-      "description": "git commit 실행 전 항상 권한 프롬프트를 띄워 커밋 메시지를 검토하게 하는 PreToolUse hook",
-      "version": "0.1.0",
-      "author": {
-        "name": "junho.choi",
-        "email": "junho.choi@bdacs.co.kr"
-      },
-      "keywords": ["git", "hook", "safety", "commit"]
-    },
-    {
-      "name": "git-push-blocker",
-      "source": "./plugins/git-push-blocker",
-      "description": "git push 실행을 항상 차단하는 PreToolUse hook. 원격에 영향을 주는 작업은 사용자가 직접 터미널에서 수행하도록 강제한다.",
-      "version": "0.1.0",
-      "author": {
-        "name": "junho.choi",
-        "email": "junho.choi@bdacs.co.kr"
-      },
-      "keywords": ["git", "hook", "safety", "push", "block"]
-    },
-    {
       "name": "harness-workflow",
       "source": "./plugins/harness-workflow",
-      "description": "프로젝트 로컬 workspace/ 기반 AI 개발 하네스. plan → TDD(test-coder/coder/verifier) → close 워크플로우 제공",
-      "version": "0.1.0",
+      "description": "프로젝트 로컬 workspace/ 기반 AI 개발 하네스. plan → TDD(test-coder/coder/verifier) → close 워크플로우 + git commit/push 안전 hook 번들",
+      "version": "0.2.0",
       "author": {
         "name": "junho.choi",
         "email": "junho.choi@bdacs.co.kr"
       },
-      "keywords": ["harness", "tdd", "workflow", "plan", "workspace"]
+      "keywords": ["harness", "tdd", "workflow", "plan", "workspace", "git", "hook", "safety", "commit", "push"]
     }
   ]
 }

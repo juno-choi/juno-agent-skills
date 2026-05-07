@@ -1,10 +1,10 @@
 {
   "name": "harness-workflow",
-  "version": "0.1.0",
-  "description": "프로젝트 로컬 workspace/ 기반 AI 개발 하네스. plan → TDD(test-coder/coder/verifier) → close 워크플로우 제공",
+  "version": "0.2.0",
+  "description": "프로젝트 로컬 workspace/ 기반 AI 개발 하네스. plan → TDD(test-coder/coder/verifier) → close 워크플로우 + git commit/push 안전 hook 번들",
   "author": {
     "name": "junho.choi",
     "email": "junho.choi@bdacs.co.kr"
   },
-  "keywords": ["harness", "tdd", "workflow", "plan", "workspace"]
+  "keywords": ["harness", "tdd", "workflow", "plan", "workspace", "git", "hook", "safety", "commit", "push"]
 }

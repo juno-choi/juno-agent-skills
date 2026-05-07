@@ -12,6 +12,8 @@
 | Agent | `test-coder` | Red 단계 — 실패 테스트 작성 |
 | Agent | `coder` | Green 단계 — 기능 구현 |
 | Agent | `verifier` | 검증 — read-only 리포트 |
+| Hook | `git commit` PreToolUse | 커밋 직전 권한 프롬프트(`ask`) 를 띄워 메시지/변경 사항 검토 강제 |
+| Hook | `git push` PreToolUse | 푸시 직전 현재 브랜치명 + force 옵션 여부를 보여주며 권한 프롬프트(`ask`) 를 띄움 |
 
 > refactor 단계의 `code-simplifier:code-simplifier` skill 은 본 plugin에 포함되지 않는다 (별도 plugin 설치 필요).
 
@@ -112,10 +114,11 @@ CLAUDE.md 만으로는 모델 준수에 의존하므로 강한 강제가 어렵�
 | 규칙 | 적합 메커니즘 | 비고 |
 |---|---|---|
 | 세션 시작 시 handoff/plan 자동 인지 | CLAUDE.md (또는 SessionStart hook) | hook 이면 강제력 ↑ |
-| build/test 직접 실행 금지 | **PreToolUse hook 권장** | `git-push-blocker` 와 동일 패턴 |
-| 커밋 메시지 형식 검증 | **PreToolUse hook 권장** | `git-commit-guard` 와 동일 패턴 |
+| build/test 직접 실행 금지 | **PreToolUse hook 권장** | 본 plugin `hooks/` 패턴 참고 |
+| 커밋 메시지 형식 검증 | **PreToolUse hook 권장** | 본 plugin 의 `git commit` ask hook 참고 |
+| 푸시 전 브랜치 확인 | **PreToolUse hook (포함됨)** | `hooks/ask-push.py` |
 | Agent 호출 순서 | CLAUDE.md | 절차 강제는 어려움 — 모델 신뢰 |
 | workspace/archive 불변 | CLAUDE.md (또는 PreToolUse hook) | 폴더 매칭 hook 으로 강화 가능 |
 
-> 본 plugin은 현재 skill + agent 만 포함한다. 강제 차단이 필요하면 hook 을 추가
-> plugin 으로 분리하거나 본 plugin 에 hook 디렉토리를 추가하는 방향을 검토할 것.
+> 본 plugin 은 skill + agent + git commit/push PreToolUse hook 묶음을 함께 제공한다.
+> 추가 강제(예: build/test 차단, workspace 불변)가 필요하면 `hooks/` 에 항목을 더 추가하면 된다.

@@ -9,11 +9,11 @@
 
 | Plugin | 설명 |
 | --- | --- |
-| `git-commit-guard` | `git commit` 실행 전 항상 권한 프롬프트를 띄워 커밋 메시지를 검토하게 하는 PreToolUse hook |
-| `git-push-blocker` | `git push` 실행을 항상 차단하는 PreToolUse hook. 원격 반영은 사용자가 직접 터미널에서 수행하도록 강제한다. |
-| `harness-workflow` | 프로젝트 로컬 `workspace/` 기반 plan → TDD(`test-coder`/`coder`/`verifier`) → close 워크플로우 plugin |
+| `harness-workflow` | 프로젝트 로컬 `workspace/` 기반 plan → TDD(`test-coder`/`coder`/`verifier`) → close 워크플로우 + `git commit` / `git push` 안전 hook 번들 |
 
 > `harness-workflow` 의 refactor 단계는 `code-simplifier:code-simplifier` skill 을 별도로 가정합니다. (별도 plugin 설치 필요)
+>
+> `git commit` / `git push` 실행 시 PreToolUse hook 이 권한 프롬프트(`ask`) 를 띄웁니다. push hook 은 현재 브랜치명과 force 옵션 여부도 함께 보여줍니다.
 
 ## 설치 방법
 
@@ -36,7 +36,6 @@ Claude Code 세션 안에서 슬래시 명령으로 마켓플레이스를 등록
 ### 2) 플러그인 설치
 
 ```
-/plugin install git-commit-guard@juno-agent-skills
 /plugin install harness-workflow@juno-agent-skills
 ```
 
@@ -61,7 +60,7 @@ Claude Code 세션 안에서 슬래시 명령으로 마켓플레이스를 등록
 
 ```
 /plugin marketplace update juno-agent-skills   # 마켓플레이스 최신화
-/plugin uninstall git-commit-guard             # 플러그인 제거
+/plugin uninstall harness-workflow             # 플러그인 제거
 /plugin marketplace remove juno-agent-skills   # 마켓플레이스 등록 해제
 ```
 
