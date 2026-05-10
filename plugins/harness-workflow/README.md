@@ -8,6 +8,7 @@
 | 종류 | 이름 | 역할 |
 |---|---|---|
 | Skill | `/plan` | 요구사항 → `workspace/` 초기화 + `plan.md` 작성 |
+| Skill | `/work` | plan.md 다음 Task 1개를 TDD 사이클(red→green→verify→refactor)로 자동 진행 + test/code/refactor 3커밋 |
 | Skill | `/close` | 작업 완료 → `archive/` 이동 + brain 아카이빙 안내 |
 | Agent | `test-coder` | Red 단계 — 실패 테스트 작성 |
 | Agent | `coder` | Green 단계 — 기능 구현 |
@@ -24,21 +25,29 @@
   ↓
 [/plan]  workspace/ 초기화 → plan.md + handoff.md 생성
   ↓
-──── Task 단위 반복 ────
+──── /work 1회 호출 = Task 1개 ────
 [test-coder]                  실패 테스트 + 스켈레톤
-  ↓ 사용자 빌드 → Red 확인
-[coder]                       최소 구현 + plan.md Task 체크
-  ↓ 사용자 빌드 → Green 확인
+  ↓ 자동 빌드 (redirect+tail) → Red 자동 판정
+git commit  test: {commit-name} [phase-N] [task-N] {설명}
+  ↓
+[coder]                       최소 구현
+  ↓ 자동 빌드 → Green 자동 판정 (실패 시 멈춤)
+git commit  feat: {commit-name} [phase-N] [task-N] {설명}
+  ↓
 [verifier]                    read-only 검증 리포트
-  ↓ PASS 판정
-[code-simplifier]             refactor (별도 plugin)
-  ↓ 사용자 빌드 → Green 유지 확인
-커밋:  feat: {commit-name} [phase-N] [task-N] {설명}
-       handoff.md 업데이트
+  ↓ PASS 판정 (FAIL 시 멈춤)
+[code-simplifier]             refactor (별도 plugin, 미설치 시 스킵)
+  ↓ 자동 빌드 → Green 유지 확인
+git commit  refactor: {commit-name} [phase-N] [task-N] {설명}
+  ↓
+plan.md Task 체크 + handoff.md commit log 갱신
 ────────────────────────
   ↓ 모든 Task 완료
 [/close]  workspace/archive/{N}_{slug}/ 로 이동 + brain 아카이빙 안내
 ```
+
+빌드는 `workspace/.last_build.log` 로 redirect 하고 마지막 25줄만 context 에 적재한다 (context 오염 최소화).
+`git commit` 은 PreToolUse `ask` hook 으로 매번 사용자 승인을 받는다.
 
 ## 설치
 
@@ -74,19 +83,18 @@
 - 새 요구사항(요구사항 문서/링크)이 들어오면 `/plan` 부터 시작한다.
   plan.md 없이 바로 코드 작성 금지.
 
-## Agent 호출 순서 (TDD 사이클)
-Task 단위 진행은 다음 순서를 강제한다. 사용자가 명시적으로 건너뛰지 않는 한 임의 변경 금지.
-1. test-coder  (Red 단계 — 실패 테스트 + 스켈레톤)
-2. 사용자 빌드 → Red 확인
-3. coder       (Green 단계 — 최소 구현 + plan.md Task 체크)
-4. 사용자 빌드 → Green 확인
-5. verifier    (read-only 검증 리포트)
-6. code-simplifier:code-simplifier (refactor) — 별도 plugin
+## TDD 사이클 진행
+- Task 단위 진행은 `/work` 스킬을 호출한다. (`/work` 1회 = Task 1개 완료)
+- `/work` 가 다음 순서를 자동 강제: test-coder → 빌드 → test 커밋 → coder → 빌드 → code 커밋 → verifier → (code-simplifier) → refactor 커밋.
+- 사용자가 명시적으로 건너뛰지 않는 한 위 순서를 임의 변경하지 않는다.
+- code-simplifier:code-simplifier 가 미설치면 refactor 단계는 스킵된다 (별도 plugin).
 
 ## 빌드 / 테스트 정책
-- Claude 는 build/test 명령을 직접 실행하지 않는다 (context 오염 방지).
-- 빌드/테스트 결과는 사용자가 텍스트로 전달하며, 그 결과만 보고 다음 단계 판단.
-- 본 프로젝트 빌드 명령: `./gradlew test`   ← 프로젝트마다 수정
+- Claude 는 build/test 명령을 raw 로 직접 실행하지 않는다 (context 오염 방지).
+- `/work` 는 다음 패턴으로만 빌드를 실행한다: `<build-cmd> > workspace/.last_build.log 2>&1; tail -25 workspace/.last_build.log`
+  - 전체 로그는 파일로 보존, AI context 에는 마지막 25줄만 적재.
+  - 실패 디버그 시 사용자가 `workspace/.last_build.log` 직접 열람.
+- 본 프로젝트 빌드 명령: `./gradlew test`   ← 프로젝트마다 수정 (`/work` 가 이 라인을 grep 한다)
 
 ## 커밋 컨벤션
 - 형식: `feat: {commit-name} [phase-N] [task-N] {설명}`
