@@ -11,7 +11,7 @@
 | --- | --- |
 | `harness-workflow` | 프로젝트 로컬 `workspace/` 기반 plan → TDD(`test-coder`/`coder`/`verifier`) → close 워크플로우 + `git commit` / `git push` 안전 hook 번들 |
 
-> `harness-workflow` 의 refactor 단계는 `code-simplifier:code-simplifier` skill 을 별도로 가정합니다. (별도 plugin 설치 필요)
+> `harness-workflow` 의 refactor 단계는 Claude Code 내장 `simplify` skill 을 사용합니다. (별도 설치 불필요)
 >
 > `git commit` / `git push` 실행 시 PreToolUse hook 이 권한 프롬프트(`ask`) 를 띄웁니다. push hook 은 현재 브랜치명과 force 옵션 여부도 함께 보여줍니다.
 

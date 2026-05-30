@@ -1,12 +1,12 @@
 ---
 name: work
-description: "workspace/plan.md 의 다음 미완료 Task 1개를 TDD 사이클(test-coder → coder → verifier → code-simplifier)로 자동 진행하고 test/code/refactor 3개 커밋으로 마무리하는 스킬. '/work', 'work', '다음 task', '다음 task 진행', '다음 task 진행해줘', '다음 작업', '다음 작업 시작', '다음 작업 진행', '다음 거 작업', '다음 거 진행', 'tdd 사이클', 'tdd 진행', 'tdd 한 번 돌려', 'red green refactor', '한 사이클 돌려', '다음 단계 진행', 'plan 다음 task', 'workspace 다음 task', 'task 이어서 진행', 'phase x task y 진행', 'task 1.x 진행' 등 workspace/plan.md 의 Task 를 이어서 진행하려는 모든 표현에 반드시 사용한다."
+description: "workspace/plan.md 의 다음 미완료 Task 1개를 TDD 사이클(test-coder → coder → verifier → simplify)로 자동 진행하고 test/code/refactor 3개 커밋으로 마무리하는 스킬. '/work', 'work', '다음 task', '다음 task 진행', '다음 task 진행해줘', '다음 작업', '다음 작업 시작', '다음 작업 진행', '다음 거 작업', '다음 거 진행', 'tdd 사이클', 'tdd 진행', 'tdd 한 번 돌려', 'red green refactor', '한 사이클 돌려', '다음 단계 진행', 'plan 다음 task', 'workspace 다음 task', 'task 이어서 진행', 'phase x task y 진행', 'task 1.x 진행' 등 workspace/plan.md 의 Task 를 이어서 진행하려는 모든 표현에 반드시 사용한다."
 ---
 
 # /work — Task 1개 TDD 사이클 실행
 
 `workspace/plan.md` 의 **다음 미완료 Task 1개** 를 자동 선택하고
-test-coder → coder → verifier → code-simplifier 순으로 진행한 뒤
+test-coder → coder → verifier → simplify 순으로 진행한 뒤
 test / code / refactor 3개 커밋으로 마무리한다.
 
 ## 전제 조건
@@ -183,15 +183,16 @@ plan.md 에 별도 명시가 없으면 기본 `feat`. fix Task 면 `fix`.
 
 ### Step 8: Refactor 단계 (선택)
 
-1. `code-simplifier:code-simplifier` skill 가용 여부 확인.
-   - 시스템에 `code-simplifier:code-simplifier` 가 등록되지 않았으면:
+1. Claude Code 내장 `simplify` skill 을 호출한다.
+   - `simplify` 는 변경된 코드의 중복/단순화/효율/altitude 정리만 수행하고 **버그 헌팅은 하지 않는다** (정확성 검증은 Step 7 Verifier 가 이미 담당).
+   - 동작을 바꾸지 않는 구조 개선이 목적이므로 TDD Refactor 단계와 정확히 일치한다.
+   - 내장 skill 이라 별도 설치가 필요 없다. 혹시 가용하지 않으면:
      ```
-     ⏭️ code-simplifier 미설치 — refactor 단계 스킵.
-     필요 시 별도 plugin 설치 후 수동 실행.
+     ⏭️ simplify 미가용 — refactor 단계 스킵.
      ```
      Step 9 로.
 
-2. 가용하면 호출. 변경사항이 있으면 자동 빌드 (Step 3 와 동일 패턴).
+2. 호출 후 변경사항이 있으면 자동 빌드 (Step 3 와 동일 패턴).
    - **BUILD SUCCESSFUL**: refactor 커밋 생성
      ```bash
      git add {변경 파일들}

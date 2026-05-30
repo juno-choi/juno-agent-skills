@@ -16,7 +16,7 @@
 | Hook | `git commit` PreToolUse | 커밋 직전 권한 프롬프트(`ask`) 를 띄워 메시지/변경 사항 검토 강제 |
 | Hook | `git push` PreToolUse | 푸시 직전 현재 브랜치명 + force 옵션 여부를 보여주며 권한 프롬프트(`ask`) 를 띄움 |
 
-> refactor 단계의 `code-simplifier:code-simplifier` skill 은 본 plugin에 포함되지 않는다 (별도 plugin 설치 필요).
+> refactor 단계는 Claude Code 내장 `simplify` skill 을 사용한다 (별도 설치 불필요).
 
 ## 전체 작동 흐름
 
@@ -36,7 +36,7 @@ git commit  feat: {commit-name} [phase-N] [task-N] {설명}
   ↓
 [verifier]                    read-only 검증 리포트
   ↓ PASS 판정 (FAIL 시 멈춤)
-[code-simplifier]             refactor (별도 plugin, 미설치 시 스킵)
+[simplify]                    refactor (내장 skill)
   ↓ 자동 빌드 → Green 유지 확인
 git commit  refactor: {commit-name} [phase-N] [task-N] {설명}
   ↓
@@ -85,9 +85,9 @@ plan.md Task 체크 + handoff.md commit log 갱신
 
 ## TDD 사이클 진행
 - Task 단위 진행은 `/work` 스킬을 호출한다. (`/work` 1회 = Task 1개 완료)
-- `/work` 가 다음 순서를 자동 강제: test-coder → 빌드 → test 커밋 → coder → 빌드 → code 커밋 → verifier → (code-simplifier) → refactor 커밋.
+- `/work` 가 다음 순서를 자동 강제: test-coder → 빌드 → test 커밋 → coder → 빌드 → code 커밋 → verifier → simplify → refactor 커밋.
 - 사용자가 명시적으로 건너뛰지 않는 한 위 순서를 임의 변경하지 않는다.
-- code-simplifier:code-simplifier 가 미설치면 refactor 단계는 스킵된다 (별도 plugin).
+- refactor 단계는 Claude Code 내장 `simplify` skill 을 사용한다 (별도 설치 불필요).
 
 ## 빌드 / 테스트 정책
 - Claude 는 build/test 명령을 raw 로 직접 실행하지 않는다 (context 오염 방지).
