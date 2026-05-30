@@ -160,19 +160,22 @@ git commit -m "test: {commit-name} [phase-{N}] [task-{N.M}] {Task 설명}"
      ```
      중단.
 
-4. **code-review (커밋 전 버그 게이트)**: Green 빌드 성공 직후, **아직 커밋하기 전**(워킹트리에 구현 diff 가 남아있는 상태)에서 내장 `code-review` skill 을 호출한다.
-   - 옵션: `--fix` / `--comment` **둘 다 사용하지 않는다** (read-only 리뷰만). effort 는 **low 또는 medium** (high 는 불확실 finding 이 많아 게이트가 시끄러워짐).
-   - 목적: 방금 짠 구현 diff 의 correctness 버그 탐지. 정리(cleanup) finding 은 Step 8 `simplify` 와 겹치므로 **버그성 finding 위주로** 판단한다.
-   - 결과 판정:
-     - **심각 버그 없음**: 다음 단계(Step 6 커밋)로 진행.
-     - **심각 버그 발견**:
-       ```
-       ⚠️ code-review 가 버그를 지적했습니다.
-       지적 사항: {요약}
-       → coder 재호출로 수정 / 수동 수정 / 무시하고 진행 중 선택하세요.
-       ```
-       커밋하지 않고 **중단**, 사용자 결정을 받는다. 수정 후 빌드가 다시 Green 이면 이 단계를 재실행한다.
-   - `code-review` 가 가용하지 않으면 한 줄 보고 후 스킵하고 Step 6 으로 진행한다.
+### Step 5.5: code-review (커밋 전 버그 게이트)
+
+Green 빌드 성공 직후, **아직 커밋하기 전**(워킹트리에 구현 diff 가 남아있는 상태)에서 내장 `code-review` skill 을 호출한다.
+
+- 옵션: `--fix` / `--comment` **둘 다 사용하지 않는다** (read-only 리뷰만). effort 는 **low 또는 medium** (high 는 불확실 finding 이 많아 게이트가 시끄러워짐).
+- 목적: 방금 짠 구현 diff 의 correctness 버그 탐지. 정리(cleanup) finding 은 Step 8 `simplify` 와 겹치므로 **버그성 finding 위주로** 판단한다.
+- 결과 판정:
+  - **심각 버그 없음**: 다음 단계(Step 6 커밋)로 진행.
+  - **심각 버그 발견**:
+    ```
+    ⚠️ code-review 가 버그를 지적했습니다.
+    지적 사항: {요약}
+    → coder 재호출로 수정 / 수동 수정 / 무시하고 진행 중 선택하세요.
+    ```
+    커밋하지 않고 **중단**, 사용자 결정을 받는다. 수정 후 빌드가 다시 Green 이면 이 단계를 재실행한다.
+- `code-review` 가 가용하지 않으면 한 줄 보고 후 스킵하고 Step 6 으로 진행한다.
 
 ### Step 6: code 커밋
 
