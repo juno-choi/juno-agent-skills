@@ -9,7 +9,9 @@
 
 | Plugin | 설명 |
 | --- | --- |
-| `harness-workflow` | 프로젝트 로컬 `workspace/` 기반 plan → TDD(`test-coder`/`coder`/`verifier`) → close 워크플로우 |
+| `harness-workflow` | 프로젝트 로컬 `workspace/` 기반 plan → TDD(`test-coder`/`coder`/`verifier`) → close → brain-report 워크플로우 |
+
+포함 스킬: `plan`(workspace 초기화·Task 분해) → `work`(TDD 자동 사이클) → `close`(archive 이동) → `brain-report`(완료 작업을 brain `raw/` 로 회고 전달).
 
 > `harness-workflow` 의 refactor 단계는 Claude Code 내장 `simplify` skill 을 사용합니다. (별도 설치 불필요)
 
