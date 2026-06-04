@@ -93,9 +93,6 @@ git add {test/skeleton 파일들}
 git commit -m "test: {commit-name} [phase-{N}] [task-{N.M}] {Task 설명}"
 ```
 
-> `git commit` 은 plugin 의 PreToolUse hook 으로 ask 권한 프롬프트가 뜬다.
-> 사용자가 거부하면 스킬은 즉시 중단하고 보고만 한다.
-
 커밋 hash 를 기록해 둔다 (Step 9 에서 사용).
 
 ### Step 5: Green 단계 (coder)
@@ -202,6 +199,5 @@ handoff.md: commit log 갱신
 - **agent 안에서 빌드/테스트 명령을 직접 실행하지 못하도록** test-coder/coder 호출 프롬프트에 명시 (이미 agent 정의에 적혀 있지만 한 번 더 강조).
 - **커밋 메시지 prefix 는 plan.md 의 commit name 을 그대로 사용**. 추측 금지.
 - **`workspace/.last_build.log` 는 `.gitignore` 에 포함된 `workspace/` 하위라서 별도 ignore 불필요**.
-- **PreToolUse ask hook 이 git commit 마다 뜸**: 사용자가 거부하면 즉시 중단. amend/force 로 우회하지 않는다.
 - **Task 1개 단위로 종료한다**: Phase 전체 자동 진행 금지. 매 호출마다 다음 Task 1개씩.
 - **Verifier FAIL 시 자동 수정 금지**: 반드시 사용자 결정.

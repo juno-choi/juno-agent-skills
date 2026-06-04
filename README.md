@@ -9,11 +9,9 @@
 
 | Plugin | 설명 |
 | --- | --- |
-| `harness-workflow` | 프로젝트 로컬 `workspace/` 기반 plan → TDD(`test-coder`/`coder`/`verifier`) → close 워크플로우 + `git commit` / `git push` 안전 hook 번들 |
+| `harness-workflow` | 프로젝트 로컬 `workspace/` 기반 plan → TDD(`test-coder`/`coder`/`verifier`) → close 워크플로우 |
 
 > `harness-workflow` 의 refactor 단계는 `code-simplifier:code-simplifier` skill 을 별도로 가정합니다. (별도 plugin 설치 필요)
->
-> `git commit` / `git push` 실행 시 PreToolUse hook 이 권한 프롬프트(`ask`) 를 띄웁니다. push hook 은 현재 브랜치명과 force 옵션 여부도 함께 보여줍니다.
 
 ## 설치 방법
 
@@ -67,4 +65,3 @@ Claude Code 세션 안에서 슬래시 명령으로 마켓플레이스를 등록
 ## 참고
 
 - 로컬 경로와 GitHub 경로를 동시에 등록하면 marketplace name(`juno-agent-skills`)이 충돌하므로 한 가지 방식만 사용하세요.
-- hook 동작 디버깅이 필요하면 `claude --debug` 로그에서 `PreToolUse` 이벤트를 확인할 수 있습니다.
