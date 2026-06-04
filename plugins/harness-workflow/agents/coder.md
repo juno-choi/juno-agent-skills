@@ -41,11 +41,7 @@ TDD Green 단계 전문 에이전트. 기존 테스트를 통과하는 최소한
 - 프로젝트 컨벤션 준수 (네이밍, 계층 구조, 어노테이션 패턴)
 - 추측 금지 — 테스트에 없는 동작은 구현하지 않음
 
-### Step 4: plan.md Task 체크
-
-구현 완료된 Task 를 `workspace/plan.md` 에서 `- [x]` 로 체크한다.
-
-### Step 5: 완료 보고
+### Step 4: 완료 보고
 
 ```
 ✅ 구현 완료 (Green 단계)
@@ -67,4 +63,4 @@ TDD Green 단계 전문 에이전트. 기존 테스트를 통과하는 최소한
 
 - build, test 명령어를 직접 실행하지 않는다
 - Task 범위를 벗어나는 구현은 하지 않는다
-- plan.md Task 체크는 구현 파일 저장 후 바로 실행
+- **plan.md 의 Task 완료 체크(`- [x]`)는 하지 않는다** — verifier·simplify 까지 통과한 뒤 orchestrator(`/work` Step 9)가 단일 책임으로 처리한다. coder 가 미리 체크하면 verifier FAIL 시 plan.md 가 완료로 잘못 표시된다.

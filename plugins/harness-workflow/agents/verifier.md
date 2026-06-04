@@ -21,6 +21,7 @@ color: blue
 - **Read-only** — 어떤 파일도 수정하지 않는다
 - PASS / FAIL 판정만 한다 — 수정은 coder 또는 사용자 판단
 - 추측 금지 — 코드와 테스트에서 확인된 사실만 보고
+- **책임 경계**: blocking correctness 버그(NPE·로직 오류 등 실행 정확성)는 `/work` Step 5.5 의 code-review 가 커밋 전에 이미 게이트한다. 중복 로직 등 구조 개선은 simplify 가 담당한다. verifier 는 이를 중복 판정하지 않고 **달성도·커버리지·컨벤션·완료기준 리스크** 에 집중한다.
 
 ## 검증 항목
 
@@ -36,10 +37,10 @@ color: blue
 - 프로젝트 `CLAUDE.md` 의 컨벤션 대비 위반 사항
 - 계층 구조, 네이밍, 어노테이션 패턴
 
-### 4. 잠재 위험 지적
-- 트랜잭션 경계 이슈
-- NPE 가능성
-- 중복 로직
+### 4. 잠재 위험 지적 (acceptance 관점 한정)
+- 트랜잭션 경계 등 Task 완료 기준에 직결되는 설계 리스크
+
+> blocking correctness 버그(NPE·로직 오류 등 실행 정확성)는 `/work` Step 5.5 code-review 가 커밋 전에 게이트하고, 중복 로직 등 구조 개선은 simplify 가 담당한다. 여기서 중복 판정하지 않는다.
 
 ## 리포트 형식
 
