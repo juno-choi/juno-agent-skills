@@ -103,7 +103,7 @@ brain 세션에서 /ingest → wiki 반영
 
 ## 커밋 컨벤션
 - 형식: `feat: {commit-name} [phase-N] [task-N] {설명}`
-  - commit-name 은 `workspace/plan.md` 의 `commit name` 필드 사용
+  - commit-name 은 `workspace/plan.md` 의 `commit-name` 필드 사용
 - 커밋 직후 `workspace/handoff.md` 의 `commit log` 섹션 업데이트
 - `git push` 는 사용자가 직접 수행 (자동 push 금지)
 

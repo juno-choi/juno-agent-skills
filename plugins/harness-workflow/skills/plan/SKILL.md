@@ -13,6 +13,7 @@ description: "요구사항 문서(링크 또는 파일 경로)를 기반으로 w
 - 현재 작업 디렉토리가 대상 프로젝트 루트
 - 사용자가 요구사항 문서 경로 또는 링크를 전달함
 - `.gitignore` 에 `workspace/` 가 등재되어 있는지 확인 (없으면 추가 안내)
+- 프로젝트 루트 `CLAUDE.md` 에 `/work` 용 빌드 명령 라인이 있는지 확인 (Step 5 에서 처리, 없으면 추가 안내)
 
 ## 워크플로우
 
@@ -44,13 +45,9 @@ description: "요구사항 문서(링크 또는 파일 경로)를 기반으로 w
 
 **템플릿**:
 ```markdown
-# Target Project
-
-<!-- 실제 코드 리포지토리 경로 -->
-
 # Project
 - project name : {archive를 위한 프로젝트 이름}
-- commit name : {커밋시 prefix로 사용할 이름 (예: able-wlf)}
+- commit-name : {커밋시 prefix로 사용할 이름 (예: able-wlf)}
 
 # Phases
 
@@ -150,10 +147,15 @@ description: "요구사항 문서(링크 또는 파일 경로)를 기반으로 w
 - 외부 상태 (DB 마이그레이션 · MQ 등):
 ```
 
-### Step 5: .gitignore 확인
+### Step 5: 환경 확인 (.gitignore + 빌드 명령)
 
-프로젝트 루트의 `.gitignore` 에 `workspace/` 가 있는지 확인.
-없으면 사용자에게 알리고 추가 여부 확인.
+1. **`.gitignore`**: 프로젝트 루트의 `.gitignore` 에 `workspace/` 가 있는지 확인. 없으면 사용자에게 알리고 추가 여부 확인.
+
+2. **빌드 명령 라인**: `/work` 는 프로젝트 루트 `CLAUDE.md` 에서 다음 정확한 패턴을 grep 해 빌드 명령(`$BUILD_CMD`)을 얻는다:
+   ```
+   본 프로젝트 빌드 명령: `./gradlew test`
+   ```
+   이 라인이 없으면 `/work` 가 **매 호출마다 빌드 명령을 되묻는다**. 라인 존재를 확인하고, 없으면 어떤 명령을 쓸지 사용자에게 물어 그 값으로 추가를 안내한다. `CLAUDE.md` 자체가 없으면 생성 여부를 확인한다.
 
 ### Step 6: 완료 보고
 
@@ -170,7 +172,7 @@ TODO 플레이스홀더: {N}건 (있으면 목록)
 커밋 prefix: {commit-name}
 
 다음 단계:
-  - /work 호출 — Task 1개씩 TDD 사이클(브랜치 확보 → test-coder → coder → code-review → verifier → simplify)을 자동 진행
+  - /work 호출 — Task 1개씩 TDD 사이클(브랜치 확보 → test-coder → (Red 검증) → coder → code-review → verifier → simplify)을 자동 진행
   - 모든 Task 완료 후 /close 로 archive
 ```
 

@@ -87,7 +87,7 @@ test / code / refactor 3개 커밋으로 마무리한다.
    - 매칭 안되면 사용자에게 1회 확인:
      `CLAUDE.md 에 빌드 명령 라인이 없습니다. 어떤 명령을 사용할까요? (기본: ./gradlew test)`
 
-4. `workspace/plan.md` 의 `# Project` 섹션에서 `commit name` 추출.
+4. `workspace/plan.md` 의 `# Project` 섹션에서 `commit-name` 추출.
    없으면 사용자에게 확인.
 
 ### Step 2: 다음 Task 선정
@@ -311,7 +311,7 @@ Red 검증 실패 / Green 실패 / code-review 버그 / verifier FAIL / refactor
 
 - **빌드 판정은 exit code(`$CODE`) 가 1차 기준**: 빌드 도구마다 성공 문구가 다르므로(`BUILD SUCCESSFUL` vs `BUILD SUCCESS` 등) 문구 매칭에 의존하지 않는다. `tail -25` 와 빌드 문구는 실패 원인 분류용 보조다. 더 자세한 분석이 필요하면 사용자에게 `workspace/.last_build.log` 직접 확인 요청.
 - **agent 안에서 빌드/테스트 명령을 직접 실행하지 못하도록** test-coder/coder 호출 프롬프트에 명시 (이미 agent 정의에 적혀 있지만 한 번 더 강조).
-- **커밋 메시지의 commit name / commit-type 은 plan.md 값을 그대로 사용**. 추측 금지.
+- **커밋 메시지의 commit-name / commit-type 은 plan.md 값을 그대로 사용**. 추측 금지.
 - **커밋은 의미 있는 파일 묶음으로만**: `git add -A`/`git add .` 금지, Task `변경 범위` 밖 파일은 커밋에 넣지 않고 보고. 범위 밖 변경이 실제로 Task 에 필요했다면 plan.md 의 `변경 범위` 를 갱신한 뒤 커밋.
 - **`workspace/.last_build.log` 는 `.gitignore` 에 포함된 `workspace/` 하위라서 별도 ignore 불필요**.
 - **Task 1개 단위로 종료한다**: Phase 전체 자동 진행 금지. 매 호출마다 다음 Task 1개씩.
