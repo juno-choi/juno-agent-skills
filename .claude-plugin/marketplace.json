@@ -11,7 +11,7 @@
       "name": "harness-workflow",
       "source": "./plugins/harness-workflow",
       "description": "프로젝트 로컬 workspace/ 기반 AI 개발 하네스. plan → TDD(test-coder/coder/verifier) → close 워크플로우",
-      "version": "0.2.0",
+      "version": "0.4.0",
       "author": {
         "name": "junho.choi",
         "email": "junho.choi@bdacs.co.kr"
