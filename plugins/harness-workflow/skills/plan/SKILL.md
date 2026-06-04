@@ -60,7 +60,13 @@ description: "요구사항 문서(링크 또는 파일 경로)를 기반으로 w
 
 ### Tasks:
 - [ ] Task 1.1 — {설명}
+  - commit-type: {feat | fix | refactor | chore ...}
+  - 변경 범위: {패키지/모듈 경로 — 예: `app/src/main/java/kr/co/bdacs/order/**`}
+  - 완료 기준: {테스트로 검증 가능한 기준 1줄}
 - [ ] Task 1.2 — {설명}
+  - commit-type:
+  - 변경 범위:
+  - 완료 기준:
 
 ## Phase 2: {제목}
 
@@ -68,6 +74,9 @@ description: "요구사항 문서(링크 또는 파일 경로)를 기반으로 w
 
 ### Tasks:
 - [ ] Task 2.1 — {설명}
+  - commit-type:
+  - 변경 범위:
+  - 완료 기준:
 
 ## Risks & Mitigations
 
@@ -90,7 +99,14 @@ description: "요구사항 문서(링크 또는 파일 경로)를 기반으로 w
 
 **작성 규칙**:
 - Phase = 독립적으로 완료 가능한 작업 단위 (1~3일 분량)
-- Task = TDD 사이클 단위로 쪼갬 (test / code / refactor 각 1커밋)
+- Task = **의미 있는 커밋 1세트** (test / code / refactor 각 1커밋)
+  - 기준: 리뷰어가 커밋 로그만 보고 변경 의도를 이해할 수 있는 응집된 단위
+  - 한 Task 의 변경 범위가 서로 무관한 모듈/패키지에 걸치면 Task 를 쪼갠다
+  - 반대로 한 커밋이 한 줄짜리가 될 만큼 잘게 쪼개졌으면 인접 Task 와 합친다
+- Task 메타데이터 3종은 필수:
+  - `commit-type`: /work 가 code 커밋 prefix 로 그대로 사용 (feat/fix/refactor/chore ...)
+  - `변경 범위`: 패키지/디렉토리 수준 glob — /work 가 커밋 시 이 범위 밖 파일을 걸러낸다
+  - `완료 기준`: test-coder 가 테스트로 옮길 수 있는 검증 가능한 문장
 - 추측 금지 — 요구사항에서 도출되지 않는 내용은 `{TODO: 확인 필요}` 플레이스홀더
 
 ### Step 4: handoff.md 작성

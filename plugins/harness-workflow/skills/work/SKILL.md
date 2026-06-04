@@ -48,6 +48,11 @@ test / code / refactor 3개 커밋으로 마무리한다.
 
 - 가장 위쪽의 **`- [ ] Task X.Y`** 라인을 찾는다.
 - 해당 Task 가 속한 Phase 번호와 Task 설명을 추출한다.
+- Task 하위의 메타데이터 3종을 추출한다:
+  - `commit-type` → code 커밋 prefix 로 사용 ($COMMIT_TYPE)
+  - `변경 범위` → 커밋 시 파일 대조 기준 ($SCOPE)
+  - `완료 기준` → test-coder 프롬프트에 전달
+  - 셋 중 누락이 있으면 사용자에게 1회 확인 후 plan.md 에 보강하고 진행.
 - 모든 Task 가 완료(`- [x]`)면:
   ```
   ✅ 모든 Task 가 완료되었습니다.
@@ -59,6 +64,9 @@ test / code / refactor 3개 커밋으로 마무리한다.
 ```
 다음 Task: Phase {N} / Task {N.M}
 설명: {Task 설명}
+commit-type: {commit-type}
+변경 범위: {변경 범위}
+완료 기준: {완료 기준}
 
 이 Task 를 진행할까요? (y/N)
 ```
@@ -67,7 +75,8 @@ test / code / refactor 3개 커밋으로 마무리한다.
 ### Step 3: Red 단계 (test-coder)
 
 1. `test-coder` agent 를 호출. 프롬프트에 다음을 포함:
-   - 대상 Task 의 Phase / Task 번호 + 설명
+   - 대상 Task 의 Phase / Task 번호 + 설명 + `완료 기준` + `변경 범위`
+   - "테스트는 `완료 기준` 을 검증해야 하고, 생성 파일은 `변경 범위` 안에 둘 것" 명시
    - `workspace/plan.md` 경로
    - 프로젝트 `CLAUDE.md` 경로
    - "build/test 명령은 직접 실행하지 말 것" 명시
@@ -86,10 +95,15 @@ test / code / refactor 3개 커밋으로 마무리한다.
 
 ### Step 4: test 커밋
 
-변경된 테스트/스켈레톤 파일만 add 후 커밋:
+1. `git status --short` 로 변경 파일 전체를 확인한다.
+2. 각 파일을 Task 의 `변경 범위`($SCOPE) 및 test/skeleton 여부와 대조한다:
+   - 범위 안 + test/skeleton 파일 → add 대상
+   - **범위 밖 파일은 add 하지 않고** 커밋 후 보고에 목록으로 남긴다
+   - `git add -A` / `git add .` **금지** — 반드시 파일을 명시해서 add
+3. 커밋:
 
 ```bash
-git add {test/skeleton 파일들}
+git add {범위 안 test/skeleton 파일들}
 git commit -m "test: {commit-name} [phase-{N}] [task-{N.M}] {Task 설명}"
 ```
 
@@ -113,13 +127,15 @@ git commit -m "test: {commit-name} [phase-{N}] [task-{N.M}] {Task 설명}"
 
 ### Step 6: code 커밋
 
+Step 4 와 동일하게 `git status --short` → `변경 범위` 대조 후 범위 안 구현 파일만 add:
+
 ```bash
-git add {구현 파일들}
-git commit -m "feat: {commit-name} [phase-{N}] [task-{N.M}] {Task 설명}"
+git add {범위 안 구현 파일들}
+git commit -m "{commit-type}: {commit-name} [phase-{N}] [task-{N.M}] {Task 설명}"
 ```
 
-prefix(`feat`/`fix`/`refactor`/`chore`)는 Task 성격에 맞게 선택.
-plan.md 에 별도 명시가 없으면 기본 `feat`. fix Task 면 `fix`.
+prefix 는 **plan.md 해당 Task 의 `commit-type` 필드($COMMIT_TYPE)를 그대로 사용**.
+누락 시 Step 2 에서 이미 보강했으므로 여기서 추측하지 않는다.
 
 ### Step 7: Verifier
 
@@ -143,9 +159,9 @@ plan.md 에 별도 명시가 없으면 기본 `feat`. fix Task 면 `fix`.
      Step 9 로.
 
 2. 가용하면 호출. 변경사항이 있으면 자동 빌드 (Step 3 와 동일 패턴).
-   - **BUILD SUCCESSFUL**: refactor 커밋 생성
+   - **BUILD SUCCESSFUL**: refactor 커밋 생성 (Step 4 와 동일하게 범위 대조 후 add)
      ```bash
-     git add {변경 파일들}
+     git add {범위 안 변경 파일들}
      git commit -m "refactor: {commit-name} [phase-{N}] [task-{N.M}] {Task 설명}"
      ```
    - **BUILD FAILED**:
@@ -186,6 +202,8 @@ plan.md 에 별도 명시가 없으면 기본 `feat`. fix Task 면 `fix`.
 plan.md: Task {N.M} 체크 완료
 handoff.md: commit log 갱신
 
+커밋에서 제외된 범위 밖 파일: {목록 또는 없음}
+
 남은 Task: {M개}
 
 다음 단계:
@@ -197,7 +215,8 @@ handoff.md: commit log 갱신
 
 - **빌드 결과 판단은 tail -25 만 본다**: 더 자세한 분석이 필요하면 사용자에게 `workspace/.last_build.log` 직접 확인 요청.
 - **agent 안에서 빌드/테스트 명령을 직접 실행하지 못하도록** test-coder/coder 호출 프롬프트에 명시 (이미 agent 정의에 적혀 있지만 한 번 더 강조).
-- **커밋 메시지 prefix 는 plan.md 의 commit name 을 그대로 사용**. 추측 금지.
+- **커밋 메시지의 commit name / commit-type 은 plan.md 값을 그대로 사용**. 추측 금지.
+- **커밋은 의미 있는 파일 묶음으로만**: `git add -A`/`git add .` 금지, Task `변경 범위` 밖 파일은 커밋에 넣지 않고 보고. 범위 밖 변경이 실제로 Task 에 필요했다면 plan.md 의 `변경 범위` 를 갱신한 뒤 커밋.
 - **`workspace/.last_build.log` 는 `.gitignore` 에 포함된 `workspace/` 하위라서 별도 ignore 불필요**.
 - **Task 1개 단위로 종료한다**: Phase 전체 자동 진행 금지. 매 호출마다 다음 Task 1개씩.
 - **Verifier FAIL 시 자동 수정 금지**: 반드시 사용자 결정.
