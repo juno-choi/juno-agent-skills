@@ -74,24 +74,14 @@ commit-type: {commit-type}
 
 ### Step 3: Red 단계 (test-coder)
 
-1. `test-coder` agent 를 호출. 프롬프트에 다음을 포함:
-   - 대상 Task 의 Phase / Task 번호 + 설명 + `완료 기준` + `변경 범위`
-   - "테스트는 `완료 기준` 을 검증해야 하고, 생성 파일은 `변경 범위` 안에 둘 것" 명시
-   - `workspace/plan.md` 경로
-   - 프로젝트 `CLAUDE.md` 경로
-   - "build/test 명령은 직접 실행하지 말 것" 명시
+`test-coder` agent 를 호출. 프롬프트에 다음을 포함:
+- 대상 Task 의 Phase / Task 번호 + 설명 + `완료 기준` + `변경 범위`
+- "테스트는 `완료 기준` 을 검증해야 하고, 생성 파일은 `변경 범위` 안에 둘 것" 명시
+- `workspace/plan.md` 경로
+- 프로젝트 `CLAUDE.md` 경로
+- "build/test 명령은 직접 실행하지 말 것" 명시
 
-2. agent 완료 후 자동 빌드 (redirect+tail):
-   ```bash
-   $BUILD_CMD > workspace/.last_build.log 2>&1; tail -25 workspace/.last_build.log
-   ```
-   - `workspace/.last_build.log` 에 전체 출력 저장
-   - `tail -25` 결과만 context 에 적재
-
-3. 결과 판정:
-   - **BUILD FAILED + 테스트 실패**: Red 정상 → 다음 단계 진행
-   - **BUILD SUCCESSFUL**: 테스트가 실패하지 않음 → 테스트가 의미 있는지 사용자 확인 요청 후 일시 중단
-   - **컴파일 실패**: 스켈레톤 누락 가능성 → test-coder 에게 보강 요청 1회 재호출, 그래도 실패 시 중단
+이 단계에서는 빌드하지 않는다 — Red 확인은 생략하고 Step 5 의 Green 빌드에서 한 번에 검증한다.
 
 ### Step 4: test 커밋
 
@@ -113,11 +103,17 @@ git commit -m "test: {commit-name} [phase-{N}] [task-{N.M}] {Task 설명}"
 
 1. `coder` agent 호출. 프롬프트에 동일 컨텍스트 + Step 3 의 테스트 코드 위치 전달.
 
-2. agent 완료 후 자동 빌드 (Step 3 와 동일 패턴).
+2. agent 완료 후 자동 빌드 (redirect+tail):
+   ```bash
+   $BUILD_CMD > workspace/.last_build.log 2>&1; tail -25 workspace/.last_build.log
+   ```
+   - `workspace/.last_build.log` 에 전체 출력 저장
+   - `tail -25` 결과만 context 에 적재
 
 3. 결과 판정:
    - **BUILD SUCCESSFUL**: Green → 다음 단계 진행
-   - **BUILD FAILED**:
+   - **BUILD FAILED (테스트 코드/스켈레톤 컴파일 실패)**: test-coder 산출물 문제 → test-coder 에게 보강 요청 1회 재호출 후 재빌드, 그래도 실패 시 중단.
+   - **BUILD FAILED (구현 문제)**:
      ```
      ❌ Green 실패.
      로그: workspace/.last_build.log
@@ -158,7 +154,7 @@ prefix 는 **plan.md 해당 Task 의 `commit-type` 필드($COMMIT_TYPE)를 그�
      ```
      Step 9 로.
 
-2. 가용하면 호출. 변경사항이 있으면 자동 빌드 (Step 3 와 동일 패턴).
+2. 가용하면 호출. 변경사항이 있으면 자동 빌드 (Step 5 와 동일 패턴).
    - **BUILD SUCCESSFUL**: refactor 커밋 생성 (Step 4 와 동일하게 범위 대조 후 add)
      ```bash
      git add {범위 안 변경 파일들}

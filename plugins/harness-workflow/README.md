@@ -25,11 +25,11 @@
   ↓
 ──── /work 1회 호출 = Task 1개 ────
 [test-coder]                  실패 테스트 + 스켈레톤
-  ↓ 자동 빌드 (redirect+tail) → Red 자동 판정
+  ↓
 git commit  test: {commit-name} [phase-N] [task-N] {설명}
   ↓
 [coder]                       최소 구현
-  ↓ 자동 빌드 → Green 자동 판정 (실패 시 멈춤)
+  ↓ 자동 빌드 (redirect+tail) → Green 자동 판정 (실패 시 멈춤)
 git commit  feat: {commit-name} [phase-N] [task-N] {설명}
   ↓
 [verifier]                    read-only 검증 리포트
@@ -82,7 +82,7 @@ plan.md Task 체크 + handoff.md commit log 갱신
 
 ## TDD 사이클 진행
 - Task 단위 진행은 `/work` 스킬을 호출한다. (`/work` 1회 = Task 1개 완료)
-- `/work` 가 다음 순서를 자동 강제: test-coder → 빌드 → test 커밋 → coder → 빌드 → code 커밋 → verifier → (code-simplifier) → refactor 커밋.
+- `/work` 가 다음 순서를 자동 강제: test-coder → test 커밋 → coder → 빌드 → code 커밋 → verifier → (code-simplifier) → refactor 커밋.
 - 사용자가 명시적으로 건너뛰지 않는 한 위 순서를 임의 변경하지 않는다.
 - code-simplifier:code-simplifier 가 미설치면 refactor 단계는 스킵된다 (별도 plugin).
 
