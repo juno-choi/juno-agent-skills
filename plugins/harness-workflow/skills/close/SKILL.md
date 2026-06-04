@@ -52,9 +52,8 @@ brain 아카이빙 경로를 안내한다.
 이동 경로: workspace/archive/{N}_{slug}/
 
 brain 아카이빙 (선택, brain = 사용자의 개인 지식베이스 repo · 없으면 건너뜀):
-  의미 있는 결정이나 교훈은 brain 에 기록을 권장합니다.
-  - 중요 설계 결정 → brain/wiki/analyses/ 또는 concepts/
-  - 재발 방지 사항 → brain 운영자에게 ingest 요청
+  /brain-report 를 호출하면 이 archive 를 회고 리포트로 증류해
+  brain/raw/ 에 전달합니다. 이후 brain 세션에서 /ingest 로 wiki 반영.
 
 workspace/ 상태:
   plan.md, handoff.md 이동 완료.

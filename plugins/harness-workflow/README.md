@@ -10,6 +10,7 @@
 | Skill | `/plan` | 요구사항 → `workspace/` 초기화 + `plan.md` 작성 |
 | Skill | `/work` | plan.md 다음 Task 1개를 TDD 사이클(red→green→verify→refactor)로 자동 진행 + test/code/refactor 3커밋 |
 | Skill | `/close` | 작업 완료 → `archive/` 이동 + brain 아카이빙 안내 |
+| Skill | `/brain-report` | close 된 archive → 회고 리포트 증류 → brain `raw/` 전달 (이후 brain 의 `/ingest` 가 wiki 반영) |
 | Agent | `test-coder` | Red 단계 — 실패 테스트 작성 |
 | Agent | `coder` | Green 단계 — 기능 구현 |
 | Agent | `verifier` | 검증 — read-only 리포트 |
@@ -44,6 +45,10 @@ plan.md Task 체크 + handoff.md commit log 갱신
 ────────────────────────
   ↓ 모든 Task 완료
 [/close]  workspace/archive/{N}_{slug}/ 로 이동 + brain 아카이빙 안내
+  ↓ (선택)
+[/brain-report]  archive → 회고 리포트 증류 → brain raw/ 전달
+  ↓
+brain 세션에서 /ingest → wiki 반영
 ```
 
 빌드는 `workspace/.last_build.log` 로 redirect 하고 마지막 25줄만 context 에 적재한다 (context 오염 최소화).
