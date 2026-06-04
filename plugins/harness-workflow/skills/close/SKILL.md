@@ -34,14 +34,15 @@ brain 아카이빙 경로를 안내한다.
 `workspace/plan.md` 의 `project name` 필드에서 slug를 가져온다.
 없으면 사용자에게 확인.
 
-### Step 4: archive 이동
+### Step 4: handoff 최종 업데이트
+
+**이동하기 전에** `handoff.md` 의 `마지막 수정일` 과 `완료 Phase` 를 먼저 업데이트한다.
+(이동 후에는 archive 안의 파일을 건드리지 않는 불변 원칙 때문에, 갱신은 반드시 이동 전에 끝낸다.)
+
+### Step 5: archive 이동
 
 `workspace/archive/{N}_{slug}/` 폴더 생성 후
 `workspace/plan.md`, `workspace/handoff.md` 를 해당 폴더로 이동.
-
-### Step 5: handoff 최종 업데이트
-
-이동 전 `handoff.md` 의 `마지막 수정일` 과 `완료 Phase` 를 업데이트한다.
 
 ### Step 6: brain 아카이빙 안내
 
@@ -50,7 +51,7 @@ brain 아카이빙 경로를 안내한다.
 
 이동 경로: workspace/archive/{N}_{slug}/
 
-brain 아카이빙 (선택):
+brain 아카이빙 (선택, brain = 사용자의 개인 지식베이스 repo · 없으면 건너뜀):
   의미 있는 결정이나 교훈은 brain 에 기록을 권장합니다.
   - 중요 설계 결정 → brain/wiki/analyses/ 또는 concepts/
   - 재발 방지 사항 → brain 운영자에게 ingest 요청

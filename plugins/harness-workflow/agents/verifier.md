@@ -1,7 +1,7 @@
 ---
 name: verifier
 description: "coder 또는 test-coder 가 작성한 코드를 검증하는 agent. read-only — 코드를 수정하지 않는다.
-  Green 단계 완료 후 code-simplifier 호출 전에 사용한다.
+  Green 단계 완료 후 simplify 호출 전에 사용한다.
 
   Examples:
   - user: '구현 완료했어, 검증해줘'
@@ -63,7 +63,7 @@ color: blue
 - {있으면 목록, 없으면 "없음"}
 
 ### 종합 판정
-✅ PASS — code-simplifier 로 refactor 진행 가능
+✅ PASS — simplify 로 refactor 진행 가능
 ❌ FAIL — {수정 필요 항목} 해결 후 재검증 필요
 ```
 
@@ -71,5 +71,5 @@ color: blue
 
 - 어떤 파일도 Write / Edit 하지 않는다
 - FAIL 판정 시 수정 방법을 제안하되 직접 수정하지 않는다
-- 종합 판정 PASS 여야 code-simplifier 단계로 진행한다
-- `code-simplifier:code-simplifier` 는 본 plugin에 포함되지 않는다 — 별도 plugin 설치 필요
+- 종합 판정 PASS 여야 simplify 단계로 진행한다
+- refactor 단계는 Claude Code 내장 `simplify` skill 을 사용한다 — 별도 설치 불필요

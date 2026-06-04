@@ -1,7 +1,7 @@
 ---
 name: plan
-description: "요구사항 문서(링크 또는 파일 경로)를 기반으로 workspace/ 폴더를 초기화하고 plan.md를 작성하는 스킬.
-  '플랜 만들어', 'plan 작성', '작업 계획 세워', '요구사항 보고 plan 짜줘' 등을 요청할 때 사용한다."
+description: "요구사항 문서(링크 또는 파일 경로)를 기반으로 workspace/ 폴더를 초기화하고 plan.md(Phase·Task 분해) + handoff.md 를 작성하는 스킬. 이후 /work 가 이 plan.md 를 읽어 TDD 사이클을 진행하므로, 작업을 시작하기 전 계획 수립 단계에서 반드시 사용한다.
+  '플랜 만들어', 'plan 작성', '작업 계획 세워', '요구사항 보고 plan 짜줘', '요구사항 정리해서 계획', '어떻게 진행할지 계획', 'phase 나눠줘', 'task 로 쪼개줘', '작업 단계 설계', 'workspace 초기화', '이 문서로 작업 시작하자' 등 요구사항을 받아 작업 계획을 세우려는 모든 표현에 사용한다."
 ---
 
 # /plan — workspace 초기화 + plan.md 작성
@@ -20,8 +20,8 @@ description: "요구사항 문서(링크 또는 파일 경로)를 기반으로 w
 
 사용자가 전달한 경로 또는 링크의 문서를 읽는다.
 - 파일 경로면 Read
-- brain Output/rfc 경로면 Read
 - URL이면 WebFetch
+- `brain/...` 경로면 Read (brain = 사용자의 개인 지식베이스 repo. 환경에 따라 없을 수 있으며, 없으면 일반 파일 경로로 취급)
 
 ### Step 2: workspace/ 구조 생성
 
@@ -170,9 +170,11 @@ TODO 플레이스홀더: {N}건 (있으면 목록)
 커밋 prefix: {commit-name}
 
 다음 단계:
-  - test-coder agent 로 Phase 1, Task 1.1 테스트 코드 작성
-  - 빌드는 직접 터미널에서 실행 (context 오염 방지)
+  - /work 호출 — Task 1개씩 TDD 사이클(브랜치 확보 → test-coder → coder → code-review → verifier → simplify)을 자동 진행
+  - 모든 Task 완료 후 /close 로 archive
 ```
+
+> `/work` 가 빌드/테스트를 알아서 실행하므로, plan 단계에서 빌드 명령을 직접 돌릴 필요는 없다.
 
 ## 주의사항
 
