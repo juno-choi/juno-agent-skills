@@ -6,8 +6,15 @@ description: "workspace/plan.md 의 다음 미완료 Task 1개를 TDD 사이클(
 # /work — Task 1개 TDD 사이클 실행
 
 `workspace/plan.md` 의 **다음 미완료 Task 1개** 를 자동 선택하고
-test-coder → (Red 검증) → coder → code-review → verifier → simplify 순으로 진행한 뒤
+test-coder → (Red 검증) → coder → (Green 검증) → verifier(read-only) → code-review(read-only) → simplify 순으로 진행한 뒤
 test / code / refactor 3개 커밋으로 마무리한다.
+
+## 코드 리뷰 조건(code-review)
+- reviewer agent를 사용한다. (없다면 claude code-review를 사용)
+- 아래 파일이 있다면 해당 파일을 무조건 참조 한다.
+  - ~/.cluade/REVIEW.md
+  - ~/.claude/docs/CONVENTION.md
+  - ~/.claude/docs/PROJECT_STRUCTURE.md
 
 ## 전제 조건
 
