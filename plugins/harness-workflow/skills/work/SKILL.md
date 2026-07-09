@@ -1,13 +1,13 @@
 ---
 name: work
-description: "workspace/plan.md 의 다음 미완료 Task 1개를 TDD 사이클(test-coder → coder → code-review → verifier → simplify)로 자동 진행하고 test/code/refactor 3개 커밋으로 마무리하는 스킬. '/work', 'work', '다음 task', '다음 task 진행', '다음 task 진행해줘', '다음 작업', '다음 작업 시작', '다음 작업 진행', '다음 거 작업', '다음 거 진행', 'tdd 사이클', 'tdd 진행', 'tdd 한 번 돌려', 'red green refactor', '한 사이클 돌려', '다음 단계 진행', 'plan 다음 task', 'workspace 다음 task', 'task 이어서 진행', 'phase x task y 진행', 'task 1.x 진행' 등 workspace/plan.md 의 Task 를 이어서 진행하려는 모든 표현에 반드시 사용한다."
+description: "workspace/plan.md 의 다음 미완료 Task 1개를 TDD 사이클(test-coder → coder → code-review → verifier → simplify)로 자동 진행하고 test/code/refactor 3개 커밋 지점에서 plan.md 의 commit-mode 값(auto|manual)에 따라 자동 커밋하거나 커밋 메시지만 제시해 사용자가 직접 커밋하게 하는 스킬. '/work', 'work', '다음 task', '다음 task 진행', '다음 task 진행해줘', '다음 작업', '다음 작업 시작', '다음 작업 진행', '다음 거 작업', '다음 거 진행', 'tdd 사이클', 'tdd 진행', 'tdd 한 번 돌려', 'red green refactor', '한 사이클 돌려', '다음 단계 진행', 'plan 다음 task', 'workspace 다음 task', 'task 이어서 진행', 'phase x task y 진행', 'task 1.x 진행' 등 workspace/plan.md 의 Task 를 이어서 진행하려는 모든 표현에 반드시 사용한다."
 ---
 
 # /work — Task 1개 TDD 사이클 실행
 
 `workspace/plan.md` 의 **다음 미완료 Task 1개** 를 자동 선택하고
 test-coder → (Red 검증) → coder → (Green 검증) → verifier(read-only) → code-review(read-only) → simplify 순으로 진행한 뒤
-test / code / refactor 3개 커밋으로 마무리한다.
+test / code / refactor 3개 지점에서 `plan.md` 의 `commit-mode` 플래그(`auto` | `manual`, 기본값 `manual`)에 따라 **자동으로 `git commit` 까지 실행하거나, `git add` 까지만 하고 사용자가 직접 커밋하도록 안내한다.**
 
 ## 코드 리뷰 조건(code-review)
 - reviewer agent를 사용한다. (없다면 claude code-review를 사용)
@@ -97,6 +97,11 @@ test / code / refactor 3개 커밋으로 마무리한다.
 4. `workspace/plan.md` 의 `# Project` 섹션에서 `commit-name` 추출.
    없으면 사용자에게 확인.
 
+5. 같은 섹션에서 `commit-mode` 추출 ($COMMIT_MODE, `auto` 또는 `manual`).
+   - 없으면 **기본값 `manual`** 로 간주하고 plan.md 에 `commit-mode : manual` 을 보강해둔다 (추측으로 `auto` 를 선택하지 않는다).
+   - `auto`: Step 4/6/8 에서 스킬이 `git commit` 까지 자동 실행.
+   - `manual`: Step 4/6/8 에서 스킬은 `git add` 까지만 하고 커밋 메시지를 제시, 실제 `git commit` 은 사용자가 직접 실행.
+
 ### Step 2: 다음 Task 선정
 
 `workspace/plan.md` 를 읽고:
@@ -149,21 +154,34 @@ $BUILD_CMD > workspace/.last_build.log 2>&1; CODE=$?; tail -25 workspace/.last_b
 - **EXIT 0 (테스트까지 통과)**: 🚨 테스트가 실패하지 않음 = Red 가 아니다. 테스트가 기대 동작을 검증하지 못하거나 구현이 이미 존재. test-coder 에게 "실패하는 테스트로 보강" 1회 재요청 후 재검증.
 - **EXIT ≠ 0 + 로그가 테스트 실패(컴파일 에러 아님)**: 정상 Red → Step 4 로 진행.
 
-### Step 4: test 커밋
+### Step 4: test 커밋 ($COMMIT_MODE 분기)
 
 1. `git status --short` 로 변경 파일 전체를 확인한다.
 2. 각 파일을 Task 의 `변경 범위`($SCOPE) 및 test/skeleton 여부와 대조한다:
    - 범위 안 + test/skeleton 파일 → add 대상
-   - **범위 밖 파일은 add 하지 않고** 커밋 후 보고에 목록으로 남긴다
+   - **범위 밖 파일은 add 하지 않고** 보고에 목록으로 남긴다
    - `git add -A` / `git add .` **금지** — 반드시 파일을 명시해서 add
-3. 커밋:
+3. 대상 파일만 스테이징한다:
 
 ```bash
 git add {범위 안 test/skeleton 파일들}
-git commit -m "test: {commit-name} [phase-{N}] [task-{N.M}] {Task 설명}"
 ```
 
-커밋 hash 를 기록해 둔다 (Step 9 에서 사용).
+4. `$COMMIT_MODE` 에 따라 분기:
+   - **`auto`**: 바로 커밋 실행.
+     ```bash
+     git commit -m "test: {commit-name} [phase-{N}] [task-{N.M}] {Task 설명}"
+     ```
+     커밋 hash 를 기록해 둔다 (Step 9 에서 사용).
+   - **`manual`**: **커밋은 직접 실행하지 않는다.** 아래 커밋 메시지를 제시하고 사용자에게 직접 커밋을 요청한다:
+     ```
+     📦 test 커밋 준비 완료. 아래 명령을 직접 실행해주세요:
+
+     git commit -m "test: {commit-name} [phase-{N}] [task-{N.M}] {Task 설명}"
+
+     커밋 후 계속 진행할까요? (y/N)
+     ```
+     사용자가 커밋 완료를 확인하면 `git rev-parse HEAD` 로 커밋 hash 를 확인해 기록해 둔다 (Step 9 에서 사용). 아직 커밋하지 않았거나 메시지를 수정했다면 그 상태를 존중하고 다음 단계로 진행하기 전에 다시 확인한다.
 
 ### Step 5: Green 단계 (coder)
 
@@ -204,21 +222,33 @@ Green 빌드 성공 직후, **아직 커밋하기 전**(워킹트리에 구현 d
     커밋하지 않고 **중단**, 사용자 결정을 받는다. 수정 후 빌드가 다시 Green 이면 이 단계를 재실행한다.
 - `code-review` 가 가용하지 않으면 한 줄 보고 후 스킵하고 Step 6 으로 진행한다.
 
-### Step 6: code 커밋
+### Step 6: code 커밋 ($COMMIT_MODE 분기)
 
-Step 4 와 동일하게 `git status --short` → `변경 범위` 대조 후 범위 안 구현 파일만 add:
+1. Step 4 와 동일하게 `git status --short` → `변경 범위` 대조 후 범위 안 구현 파일만 add:
 
 ```bash
 git add {범위 안 구현 파일들}
-git commit -m "{commit-type}: {commit-name} [phase-{N}] [task-{N.M}] {Task 설명}"
 ```
 
-prefix 는 **plan.md 해당 Task 의 `commit-type` 필드($COMMIT_TYPE)를 그대로 사용**.
-누락 시 Step 2 에서 이미 보강했으므로 여기서 추측하지 않는다.
+2. prefix 는 **plan.md 해당 Task 의 `commit-type` 필드($COMMIT_TYPE)를 그대로 사용**(누락 시 Step 2 에서 이미 보강했으므로 여기서 추측하지 않는다). `$COMMIT_MODE` 에 따라 분기:
+   - **`auto`**: 바로 커밋 실행.
+     ```bash
+     git commit -m "{commit-type}: {commit-name} [phase-{N}] [task-{N.M}] {Task 설명}"
+     ```
+     커밋 hash 를 기록해 둔다.
+   - **`manual`**: **커밋은 직접 실행하지 않는다.** 아래처럼 커밋 메시지를 제시하고 사용자에게 직접 커밋을 요청한다:
+     ```
+     📦 code 커밋 준비 완료. 아래 명령을 직접 실행해주세요:
+
+     git commit -m "{commit-type}: {commit-name} [phase-{N}] [task-{N.M}] {Task 설명}"
+
+     커밋 후 계속 진행할까요? (y/N)
+     ```
+     사용자가 커밋 완료를 확인하면 `git rev-parse HEAD` 로 커밋 hash 를 확인해 기록해 둔다.
 
 ### Step 7: Verifier
 
-`verifier` agent 호출 (read-only — Step 6 의 code 커밋이 **이미 존재하는 상태**에서 검증).
+`verifier` agent 호출 (read-only — Step 6 에서 code 커밋이 **완료된 상태**여야 검증을 시작한다. `manual` 모드에서 사용자가 아직 커밋 전이면 진행하지 않고 대기한다).
 
 - **종합 판정 PASS**: 다음 단계 진행.
 - **종합 판정 FAIL**: code 커밋이 이미 생성됐으므로 그냥 중단하면 불완전한 커밋이 히스토리에 남는다. 다음을 안내하고 중단한다:
@@ -246,11 +276,24 @@ prefix 는 **plan.md 해당 Task 의 `commit-type` 필드($COMMIT_TYPE)를 그�
      Step 9 로.
 
 2. 호출 후 변경사항이 있으면 자동 빌드 (Step 5 와 동일 패턴 — exit code 1차 판정).
-   - **EXIT 0**: refactor 커밋 생성 (Step 4 와 동일하게 범위 대조 후 add)
+   - **EXIT 0**: refactor 커밋 ($COMMIT_MODE 분기, Step 4 와 동일하게 범위 대조 후 add)
      ```bash
      git add {범위 안 변경 파일들}
-     git commit -m "refactor: {commit-name} [phase-{N}] [task-{N.M}] {Task 설명}"
      ```
+     - **`auto`**: 바로 커밋 실행.
+       ```bash
+       git commit -m "refactor: {commit-name} [phase-{N}] [task-{N.M}] {Task 설명}"
+       ```
+       커밋 hash 를 기록해 둔다.
+     - **`manual`**: **커밋은 직접 실행하지 않는다.** 아래 커밋 메시지를 제시하고 사용자에게 직접 커밋을 요청한다:
+       ```
+       📦 refactor 커밋 준비 완료. 아래 명령을 직접 실행해주세요:
+
+       git commit -m "refactor: {commit-name} [phase-{N}] [task-{N.M}] {Task 설명}"
+
+       커밋 후 계속 진행할까요? (y/N)
+       ```
+       사용자가 커밋 완료를 확인하면 `git rev-parse HEAD` 로 커밋 hash 를 확인해 기록해 둔다.
    - **EXIT ≠ 0**:
      ```
      ❌ Refactor 후 빌드 실패. 로그: workspace/.last_build.log
@@ -319,7 +362,8 @@ Red 검증 실패 / Green 실패 / code-review 버그 / verifier FAIL / refactor
 - **빌드 판정은 exit code(`$CODE`) 가 1차 기준**: 빌드 도구마다 성공 문구가 다르므로(`BUILD SUCCESSFUL` vs `BUILD SUCCESS` 등) 문구 매칭에 의존하지 않는다. `tail -25` 와 빌드 문구는 실패 원인 분류용 보조다. 더 자세한 분석이 필요하면 사용자에게 `workspace/.last_build.log` 직접 확인 요청.
 - **agent 안에서 빌드/테스트 명령을 직접 실행하지 못하도록** test-coder/coder 호출 프롬프트에 명시 (이미 agent 정의에 적혀 있지만 한 번 더 강조).
 - **커밋 메시지의 commit-name / commit-type 은 plan.md 값을 그대로 사용**. 추측 금지.
-- **커밋은 의미 있는 파일 묶음으로만**: `git add -A`/`git add .` 금지, Task `변경 범위` 밖 파일은 커밋에 넣지 않고 보고. 범위 밖 변경이 실제로 Task 에 필요했다면 plan.md 의 `변경 범위` 를 갱신한 뒤 커밋.
+- **커밋은 의미 있는 파일 묶음으로만**: `git add -A`/`git add .` 금지, Task `변경 범위` 밖 파일은 스테이징하지 않고 보고. 범위 밖 변경이 실제로 Task 에 필요했다면 plan.md 의 `변경 범위` 를 갱신한 뒤 커밋.
+- **커밋 자동/수동 여부는 `plan.md` 의 `commit-mode` 값을 따른다**: `manual`(기본값)이면 test/code/refactor 3개 지점 모두 `git add` 로 스테이징하고 커밋 메시지를 제시하기까지만 하며, 실제 `git commit` 은 사용자가 직접 하고 완료를 확인받은 뒤 다음 단계로 진행한다. `auto` 면 각 지점에서 바로 `git commit` 까지 실행한다. `commit-mode` 를 임의로 추측해 다른 값으로 바꾸지 않는다.
 - **`workspace/.last_build.log` 는 `.gitignore` 에 포함된 `workspace/` 하위라서 별도 ignore 불필요**.
 - **Task 1개 단위로 종료한다**: Phase 전체 자동 진행 금지. 매 호출마다 다음 Task 1개씩.
 - **Verifier FAIL 시 자동 수정 금지**: 반드시 사용자 결정.

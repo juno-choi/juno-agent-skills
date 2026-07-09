@@ -48,6 +48,7 @@ description: "요구사항 문서(링크 또는 파일 경로)를 기반으로 w
 # Project
 - project name : {archive를 위한 프로젝트 이름}
 - commit-name : {커밋시 prefix로 사용할 이름 (예: able-wlf)}
+- commit-mode : {auto | manual — auto면 /work 가 git commit 까지 자동 실행, manual이면 커밋 메시지만 제시하고 사용자가 직접 커밋. 기본값 manual}
 
 # Phases
 
@@ -104,6 +105,7 @@ description: "요구사항 문서(링크 또는 파일 경로)를 기반으로 w
   - `commit-type`: /work 가 code 커밋 prefix 로 그대로 사용 (feat/fix/refactor/chore ...)
   - `변경 범위`: 패키지/디렉토리 수준 glob — /work 가 커밋 시 이 범위 밖 파일을 걸러낸다
   - `완료 기준`: test-coder 가 테스트로 옮길 수 있는 검증 가능한 문장
+- `commit-mode` 는 요구사항 문서에 명시가 없으면 **기본값 `manual`** 로 채운다 (사용자에게 묻지 않음). 사용자가 자동 커밋을 원한다고 명시했으면 `auto` 로 채운다.
 - 추측 금지 — 요구사항에서 도출되지 않는 내용은 `{TODO: 확인 필요}` 플레이스홀더
 
 ### Step 4: handoff.md 작성
@@ -170,6 +172,10 @@ description: "요구사항 문서(링크 또는 파일 경로)를 기반으로 w
 TODO 플레이스홀더: {N}건 (있으면 목록)
 
 커밋 prefix: {commit-name}
+커밋 모드: {commit-mode}
+  - manual 이면: /work 가 커밋 메시지만 제시하고 실제 커밋은 사용자가 직접 실행
+  - auto 이면: /work 가 커밋까지 자동 실행
+  (plan.md 의 commit-mode 값을 직접 수정하면 이후 /work 호출부터 반영됨)
 
 다음 단계:
   - /work 호출 — Task 1개씩 TDD 사이클(브랜치 확보 → test-coder → (Red 검증) → coder → code-review → verifier → simplify)을 자동 진행
