@@ -1,6 +1,6 @@
 {
   "name": "harness-workflow",
-  "version": "0.9.0",
+  "version": "0.9.1",
   "description": "프로젝트 로컬 workspace/ 기반 AI 개발 하네스. plan → /work(TDD 자동 사이클) → close 워크플로우",
   "author": {
     "name": "junho.choi",

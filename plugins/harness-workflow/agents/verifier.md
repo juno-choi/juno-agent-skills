@@ -35,6 +35,7 @@ color: blue
 
 ### 3. 컨벤션 준수 확인
 - 프로젝트 `CLAUDE.md` 의 컨벤션 대비 위반 사항
+- **`CLAUDE.md` 가 `docs/CONVENTION.md` · `docs/PROJECT_STRUCTURE.md` 같은 상세 컨벤션 문서를 가리키면, 그 포인터를 따라가 해당 문서도 반드시 함께 읽고 대조한다.** 상세 규칙(아키텍처 계층, 접근 제한자, 네이밍, `var`/`record` 규칙 등)은 `CLAUDE.md` 본문이 아니라 이 참조 문서에 들어있으므로, 열지 않으면 위반을 놓친다.
 - 계층 구조, 네이밍, 어노테이션 패턴
 
 ### 4. 잠재 위험 지적 (acceptance 관점 한정)

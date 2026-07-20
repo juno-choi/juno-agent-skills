@@ -12,7 +12,7 @@ test / code / refactor 3개 지점에서 `plan.md` 의 `commit-mode` 플래그(`
 ## 코드 리뷰 조건(code-review)
 - reviewer agent를 사용한다. (없다면 claude code-review를 사용)
 - 아래 파일이 있다면 해당 파일을 무조건 참조 한다.
-  - ~/.cluade/REVIEW.md
+  - ~/.claude/REVIEW.md
   - ~/.claude/docs/CONVENTION.md
   - ~/.claude/docs/PROJECT_STRUCTURE.md
 

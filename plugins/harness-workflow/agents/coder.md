@@ -29,6 +29,7 @@ TDD Green 단계 전문 에이전트. 기존 테스트를 통과하는 최소한
 테스트 파일을 읽어 기대 동작을 파악한다.
 `workspace/plan.md` 의 Task 설명도 확인한다.
 프로젝트 `CLAUDE.md` 를 읽어 컨벤션을 파악한다.
+**`CLAUDE.md` 가 `docs/CONVENTION.md` · `docs/PROJECT_STRUCTURE.md` 같은 상세 컨벤션 문서를 가리키면, 그 포인터를 따라가 해당 문서도 반드시 함께 읽는다.** 상세 규칙(아키텍처 계층, 접근 제한자, 네이밍, `var`/`record` 규칙 등)은 `CLAUDE.md` 본문이 아니라 이 참조 문서에 들어있으므로, 열지 않으면 컨벤션을 어긴 코드를 쓰게 된다.
 
 ### Step 2: 기존 코드 구조 파악
 
