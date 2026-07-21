@@ -9,12 +9,12 @@ description: "workspace/plan.md 의 다음 미완료 Task 1개를 TDD 사이클(
 test-coder → (Red 검증) → coder → (Green 검증) → verifier(read-only) → code-review(read-only) → simplify 순으로 진행한 뒤
 test / code / refactor 3개 지점에서 `plan.md` 의 `commit-mode` 플래그(`auto` | `manual`, 기본값 `manual`)에 따라 **자동으로 `git commit` 까지 실행하거나, `git add` 까지만 하고 사용자가 직접 커밋하도록 안내한다.**
 
-## 코드 리뷰 조건(code-review)
-- reviewer agent를 사용한다. (없다면 claude code-review를 사용)
-- 아래 파일이 있다면 해당 파일을 무조건 참조 한다.
+## 코드 리뷰 조건(code-review) — Step 5.5 정확성 게이트
+
+- `/work` Step 5.5 는 **내장 `code-review` skill 을 사용한다** (read-only, effort `low`|`medium`, `--fix`/`--comment` 미사용). 목적은 커밋 전 **blocking 정확성 버그만** 잡는 것이다.
+- **`reviewer` agent 는 이 단계에서 쓰지 않는다.** 컨벤션 점검은 Step 7 `verifier` 의 책임이므로, Step 5.5 에서 컨벤션까지 보면 두 게이트가 중복된다. (별도로 "리뷰해줘"로 `reviewer` agent 를 직접 호출하는 것은 `/work` 흐름과 무관하게 언제든 가능하다.)
+- 아래 파일이 있으면 리뷰 판단의 보조 기준으로 참조한다.
   - ~/.claude/REVIEW.md
-  - ~/.claude/docs/CONVENTION.md
-  - ~/.claude/docs/PROJECT_STRUCTURE.md
 
 ## 전제 조건
 
