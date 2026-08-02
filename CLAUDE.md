@@ -90,7 +90,15 @@
 ## Brain Wiki (세컨드 브레인 조회 규칙)
 모르는 것이 있거나 사용자에게 질문하기 전에, 반드시 먼저 아래 brain wiki를 조회한다:
 - brain 스스로 brain에게 묻는건 하지 않는다.
-- 인덱스: ``
+- 인덱스: `C:/project/juno-ai/brain/wiki/index.md`
 - brain wiki index 위치를 모르면 사용자에게 묻고 업데이트 한다.
 - 관련 페이지를 drill-down해서 답을 찾으면 그걸 먼저 활용
 - wiki에도 없으면 → 그때 사용자에게 질문
+
+## Development Commands (플러그인 개발 명령어)
+
+이 프로젝트는 별도의 컴파일/빌드 단계가 없는 Claude Code 플러그인 마켓플레이스 저장소입니다. 로컬에서 플러그인 수정 사항을 테스트할 때는 다음 절차를 권장합니다.
+
+- **마켓플레이스 로컬 등록**: `/plugin marketplace add C:/Users/young/orca/workspaces/juno-agent-skills/feature-test` (로컬 경로 등록)
+- **플러그인 로컬 설치**: `/plugin install harness-workflow@juno-agent-skills`
+- **마켓플레이스 업데이트**: `/plugin marketplace update juno-agent-skills`
